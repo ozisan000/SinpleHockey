@@ -5,31 +5,27 @@ public class Input : MonoBehaviour
 {
     PlayerInput playerInput;        //プレイヤーの入力をつかさどるクラス
 
-    const string jumpActName = "Jump";
-    const string slidingActName = "Sliding";
-    const string startActName = "Start";
-    const string pauseActName = "Pause";
+    const string player1MoveName = "Player1Move";
+    const string player2MoveName = "Player2Move";
 
-    InputAction jumpAct;            //ジャンプの入力
-    InputAction slidingAct;         //スライディングの入力
-    InputAction startAct;           //スタート時に押すボタン
-    InputAction pauseAct;           //
+    InputAction player1Act;            //ジャンプの入力
+    InputAction player2Act;         //スライディングの入力
 
-    public bool JumpInput { get => jumpAct.IsPressed(); }       //ボタンを押したとき
-    public bool SlidingInput { get => slidingAct.IsPressed(); } //ボタンが押されているとき
-    public bool StartInput { get => startAct.triggered; }       //スタート時の入力
+    public float Player1Input { get => player1Act.ReadValue<Vector2>().y; }       //ボタンを押したとき
+    public float Player2Input { get => player2Act.ReadValue<Vector2>().y; } //ボタンが押されているとき
 
-    public bool PauseInput { get=>pauseAct.triggered; }
-
-    public void MyAwake()
+    public void Init()
     {
         //プレイヤーインプットを取得
         playerInput = GetComponent<PlayerInput>();
 
         //アクションマップからインプットアクション（バインドされた入力）を取得
-        jumpAct = playerInput.currentActionMap[jumpActName];
-        slidingAct = playerInput.currentActionMap[slidingActName];
-        startAct = playerInput.currentActionMap[startActName];
-        pauseAct = playerInput.currentActionMap[pauseActName];
+        player1Act = playerInput.currentActionMap[player1MoveName];
+        player2Act = playerInput.currentActionMap[player2MoveName];
+    }
+
+    public void Awake()
+    {
+        Init();
     }
 }

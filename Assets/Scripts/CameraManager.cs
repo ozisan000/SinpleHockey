@@ -7,11 +7,11 @@ using UnityEngine;
 public enum CameraType
 {
     TitleCamera,
-    PlayerCamera,
-    JumpCamera,
-    SlidingCamera,
-    ResultCamera,
-    BreakCamera
+    MainCamera,
+    Player1Camera,
+    Player2Camera,
+    //ResultCamera,
+    //BreakCamera
 }
 
 public class CameraManager : MonoBehaviour
@@ -23,15 +23,15 @@ public class CameraManager : MonoBehaviour
     [SerializeField]
     CinemachineVirtualCamera titleCamera;       //タイトルVCam
     [SerializeField]
-    CinemachineVirtualCamera playerCamera;      //プレイヤーVCam
+    CinemachineVirtualCamera mainCamera;      //プレイヤーVCam
     [SerializeField]
-    CinemachineVirtualCamera playerJumpCamera;      //プレイヤーがジャンプしたときのVCam
+    CinemachineVirtualCamera player1Camera;      //プレイヤーがジャンプしたときのVCam
     [SerializeField]
-    CinemachineVirtualCamera playerSlidingCamera;      //プレイヤーがジャンプしたときのVCam
-    [SerializeField]
-    CinemachineVirtualCamera playerBreakCamera;      //プレイヤーが壁を壊したときのVCam
-    [SerializeField]
-    CinemachineVirtualCamera resultCamera;
+    CinemachineVirtualCamera player2Camera;      //プレイヤーがジャンプしたときのVCam
+    //[SerializeField]
+    //CinemachineVirtualCamera playerBreakCamera;      //プレイヤーが壁を壊したときのVCam
+    //[SerializeField]
+    //CinemachineVirtualCamera resultCamera;
     [SerializeField]
     CameraType cameraType = CameraType.TitleCamera;     //現在有効になっているカメラ
     [SerializeField]
@@ -71,55 +71,55 @@ public class CameraManager : MonoBehaviour
             case CameraType.TitleCamera:
                 //タイトルカメラを有効にする
                 titleCamera.Priority = cValid;
-                playerCamera.Priority = cInValid;
-                playerJumpCamera.Priority = cInValid;
-                playerSlidingCamera.Priority = cInValid;
-                resultCamera.Priority = cInValid;
-                playerBreakCamera.Priority = cInValid;
+                mainCamera.Priority = cInValid;
+                player1Camera.Priority = cInValid;
+                player2Camera.Priority = cInValid;
+                //resultCamera.Priority = cInValid;
+                //playerBreakCamera.Priority = cInValid;
                 break;
-            case CameraType.PlayerCamera:
+            case CameraType.MainCamera:
                 //プレイヤーカメラを有効にする
                 titleCamera.Priority = cInValid;
-                playerCamera.Priority = cValid;
-                playerJumpCamera.Priority = cInValid;
-                playerSlidingCamera.Priority = cInValid;
-                resultCamera.Priority = cInValid;
-                playerBreakCamera.Priority = cInValid;
+                mainCamera.Priority = cValid;
+                player1Camera.Priority = cInValid;
+                player2Camera.Priority = cInValid;
+                //resultCamera.Priority = cInValid;
+                //playerBreakCamera.Priority = cInValid;
                 break;
-            case CameraType.JumpCamera:
+            case CameraType.Player1Camera:
                 //ジャンプカメラを有効にする
                 titleCamera.Priority = cInValid;
-                playerCamera.Priority = cInValid;
-                playerJumpCamera.Priority = cValid;
-                playerSlidingCamera.Priority = cInValid;
-                playerBreakCamera.Priority = cInValid;
+                mainCamera.Priority = cInValid;
+                player1Camera.Priority = cValid;
+                player2Camera.Priority = cInValid;
+                //playerBreakCamera.Priority = cInValid;
                 break;
-            case CameraType.SlidingCamera:
+            case CameraType.Player2Camera:
                 //スライディングカメラを有効にする
                 titleCamera.Priority = cInValid;
-                playerCamera.Priority = cInValid;
-                playerJumpCamera.Priority = cInValid;
-                playerSlidingCamera.Priority = cValid;
-                resultCamera.Priority = cInValid;
-                playerBreakCamera.Priority = cInValid;
+                mainCamera.Priority = cInValid;
+                player1Camera.Priority = cInValid;
+                player2Camera.Priority = cValid;
+                //resultCamera.Priority = cInValid;
+                //playerBreakCamera.Priority = cInValid;
                 break;
-            case CameraType.ResultCamera:
-                //スライディングカメラを有効にする
-                titleCamera.Priority = cInValid;
-                playerCamera.Priority = cInValid;
-                playerJumpCamera.Priority = cInValid;
-                playerSlidingCamera.Priority = cInValid;
-                resultCamera.Priority = cValid;
-                playerBreakCamera.Priority = cInValid;
-                break;
-            case CameraType.BreakCamera:
-                titleCamera.Priority = cInValid;
-                playerCamera.Priority = cInValid;
-                playerJumpCamera.Priority = cInValid;
-                playerSlidingCamera.Priority = cInValid;
-                resultCamera.Priority = cInValid;
-                playerBreakCamera.Priority = cValid;
-                break;
+                //case CameraType.ResultCamera:
+                //    //スライディングカメラを有効にする
+                //    titleCamera.Priority = cInValid;
+                //    playerCamera.Priority = cInValid;
+                //    playerJumpCamera.Priority = cInValid;
+                //    playerSlidingCamera.Priority = cInValid;
+                //    resultCamera.Priority = cValid;
+                //    playerBreakCamera.Priority = cInValid;
+                //    break;
+                //case CameraType.BreakCamera:
+                //    titleCamera.Priority = cInValid;
+                //    playerCamera.Priority = cInValid;
+                //    playerJumpCamera.Priority = cInValid;
+                //    playerSlidingCamera.Priority = cInValid;
+                //    resultCamera.Priority = cInValid;
+                //    playerBreakCamera.Priority = cValid;
+                //    break;
         }
     }
     public void MyAwake()
@@ -135,21 +135,5 @@ public class CameraManager : MonoBehaviour
         cinemachineCamera.m_DefaultBlend.m_Time = blendSpeed;
         //カメラの優先度をセット
         ChangeVCam();
-    }
-
-    public void MyDestroy()
-    {
-    }
-
-    public void MyFixedUpdate()
-    {
-    }
-
-    public void MyStart()
-    {
-    }
-
-    public void MyUpdate()
-    {
     }
 }

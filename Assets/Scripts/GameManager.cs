@@ -3,89 +3,98 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum JOIN_PLAYER
+{
+    Player1,
+    Player2
+}
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject startPos;
+    Sound soundManager;
     [SerializeField]
-    GameObject goal;
+    UIManager uiManager;
+    [SerializeField]
+    CameraManager cameraManager;
+    [SerializeField]
+    Input inputManager;
 
     [SerializeField]
-    AudioClip bgm;
+    GameObject ball;
     [SerializeField]
-    AudioClip goalSE;
-    [SerializeField]
-    AudioClip startSE;
-    [SerializeField]
-    AudioClip gameOverSE;
+    Transform startBallPos;
 
     [SerializeField]
-    GameObject player;
+    Player player1;
+    [SerializeField]
+    Transform startPlayer1Pos;
+    [SerializeField]
+    CollisionHandler goal1;
+    int player1Point = 0;
 
     [SerializeField]
-    TextMeshProUGUI eventTextData;
+    Player player2;
     [SerializeField]
-    TextMeshProUGUI timeTextData;
+    Transform startPlayer2Pos;
     [SerializeField]
-    string startText;
-    [SerializeField]
-    string goalText;
-    [SerializeField]
-    string gameOverText;
-    [SerializeField]
-    float startTextTime = 1.0f;
+    CollisionHandler goal2;
+    int player2Point = 0;
+
+    [SerializeField, Range(1, 100)]
+    int pointMax = 1;
     [SerializeField,Range(5.0f,999.0f)]
-    float limit = 30.0f;
+    float timeLimit = 30.0f;
 
     int flag = 0;
 
-    private float time = 0.0f;
-    private float timeBuffer = 0.0f;
+    float time = 0.0f;
+    float timeBuffer = 0.0f;
+
+    float startUITime = 0.0f;
 
     private bool onTimeSEFlag = true;
 
-    private bool inputFlag = false;
+    private bool resultFlag = false;
 
-    private bool endFlag = false;
-
-    public float GameTimer { get => time; }
-    public bool InputFlag { get => inputFlag; }
-
-    AudioSource audioSource;
+    void Init()
+    {
+        time = timeLimit;
+        player1.Init(inputManager, soundManager, JOIN_PLAYER.Player1);
+        player2.Init(inputManager, soundManager, JOIN_PLAYER.Player2);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        //スタートの座標に移動
-        player.transform.position = startPos.transform.position;
-        audioSource = GetComponent<AudioSource>();
-        time = limit;
+        inputManager.Init();
+        Init();
     }
 
     // Update is called once per frame
     void Update()
     {
-        TimerUpdate();
+        if (0 <= flag)
+            TimerUpdate();
         switch (flag)
         {
+            case -1:
+                break;
             case 0:
                 GameStart();
                 break;
             case 1:
-                CheckEvent();
+                CheckGoToResult();
                 break;
             case 2:
-                GameClear();
-                break;
-            case -1:
-                GameOver();
+                Result();
                 break;
         }
     }
 
     void TimerUpdate()
     {
-        if (!endFlag)
+        if (!resultFlag)
         {
             time -= Time.deltaTime;
         }
@@ -93,49 +102,35 @@ public class GameManager : MonoBehaviour
         if (timeBuffer != time)
         {
             timeBuffer = time;
-            timeTextData.text = ((int)time).ToString();
         }
     }
 
     void GameStart()
     {
-        if (time > limit - startTextTime)
+        if (time > timeLimit - startUITime)
         {
-            eventTextData.text = startText;
+            //eventTextData.text = startText;
 
             if (onTimeSEFlag)
             {
                 onTimeSEFlag = false;
-                audioSource.PlayOneShot(startSE);
-                audioSource.loop = true;
-                audioSource.PlayOneShot(bgm);
+                //サウンド再生
             }
         }
         else
         {
             flag++;
-            eventTextData.text = "";
-            inputFlag = true;
             onTimeSEFlag = true;
         }
     }
 
-    void CheckEvent()
+    void CheckGoToResult()
     {
-        if (HPOverEvent() || TimerOverEvent())
-            flag = -1;
-        if (GoalEvent())
+        if (CheckTimerOver()|| CheckPoint())
             flag++;
     }
 
-    bool HPOverEvent()
-    {
-        //if (status.HP <= 0)
-        //    return true;
-        return false;
-    }
-
-    bool TimerOverEvent()
+    bool CheckTimerOver()
     {
         if (time <= 0)
         {
@@ -145,37 +140,39 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
-    bool GoalEvent()
+    bool CheckPoint(JOIN_PLAYER player)
     {
-        //if (status.GoalFlag)
-        //    return true;
-        return false;
+        if (player == JOIN_PLAYER.Player1)
+        {
+            return pointMax <= player1Point;
+        }
+        else
+        {
+            return pointMax <= player2Point;
+        }
+    }
+
+    bool CheckPoint()
+    {
+        return pointMax <= player2Point || pointMax <= player1Point;
+    }
+
+    void Result()
+    {
+        //UI表示
     }
 
     void GameClear()
     {
-        eventTextData.text = goalText;
-        inputFlag = false;
-        endFlag = true;
-        EndGameSE(goalSE);
+        //eventTextData.text = goalText;
+        resultFlag = true;
+        //EndGameSE(goalSE);
     }
 
     void GameOver()
     {
-        eventTextData.text = gameOverText;
-        inputFlag = false;
-        endFlag = true;
-        EndGameSE(gameOverSE);
-    }
-
-    void EndGameSE(AudioClip se)
-    {
-        if (onTimeSEFlag)
-        {
-            audioSource.Stop();
-            audioSource.loop = false;
-            onTimeSEFlag = false;
-            audioSource.PlayOneShot(se);
-        }
+        //eventTextData.text = gameOverText;
+        resultFlag = true;
+        //EndGameSE(gameOverSE);
     }
 }
