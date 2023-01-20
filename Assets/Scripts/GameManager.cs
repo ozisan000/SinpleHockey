@@ -76,9 +76,11 @@ public class GameManager : MonoBehaviour
     {
         if (0 <= flag)
             TimerUpdate();
+        uiManager.UIUpdate(flag);
         switch (flag)
         {
             case -1:
+
                 break;
             case 0:
                 GameStart();
