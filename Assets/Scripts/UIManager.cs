@@ -14,41 +14,59 @@ public class UIManager : MonoBehaviour
     List<CanvasGroup> uiList = new List<CanvasGroup>();
     [SerializeField]
     TextMeshProUGUI timeText;
-    int uiFLag = 0;
+    int uiID = -1;
+    bool changeUIFlag = false;
 
     public void Init()
     {
         
     }
 
-    public void UIUpdate(int flag)
+    public void UIUpdate(int id)
     {
-        switch (flag)
+        if (changeUIFlag) return;
+        if (uiID != id)
         {
-
+            changeUIFlag = true;
+            Debug.Log($"ChangeUI:{id}");
+            ChangeUI(uiID, id);
         }
-        if (uiFLag != flag)
+        else
         {
-            ChangeUI(flag, uiFLag);
+            switch (uiID)
+            {
+                case 0:
+
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+
+                    break;
+            }
         }
     }
 
-    private void ChangeUI(int flag,int jump_flag)
+    private void ChangeUI(int id,int jump_id)
     {
         UILib.WaitGroupFadeProgress(
-            uiList[flag],
+            uiList[id+1],
             EasingType.OUT_QUAD,
             transparent,
             uiFadeSpeed,
-            () => { return true; },
-            () =>{
+            () => { return false; },
+            () =>
+            {
                 UILib.WaitGroupFadeProgress(
-                        uiList[flag],
+                        uiList[jump_id + 1],
                         EasingType.OUT_QUAD,
                         nonTransparent,
                         uiFadeSpeed,
                         () => { return true; },
-                        null
+                        () => { uiID = jump_id;
+                            changeUIFlag = false;
+                        }
                     );
             }
         );

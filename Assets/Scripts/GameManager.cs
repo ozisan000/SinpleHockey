@@ -45,8 +45,8 @@ public class GameManager : MonoBehaviour
     int pointMax = 1;
     [SerializeField,Range(5.0f,999.0f)]
     float timeLimit = 30.0f;
-
-    int flag = 0;
+    [SerializeField]
+    int eventID = 0;
 
     float time = 0.0f;
     float timeBuffer = 0.0f;
@@ -74,10 +74,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (0 <= flag)
+        if (0 <= eventID)
             TimerUpdate();
-        uiManager.UIUpdate(flag);
-        switch (flag)
+        uiManager.UIUpdate(eventID);
+        switch (eventID)
         {
             case -1:
 
@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            flag++;
+            eventID++;
             onTimeSEFlag = true;
         }
     }
@@ -129,7 +129,7 @@ public class GameManager : MonoBehaviour
     void CheckGoToResult()
     {
         if (CheckTimerOver()|| CheckPoint())
-            flag++;
+            eventID++;
     }
 
     bool CheckTimerOver()
