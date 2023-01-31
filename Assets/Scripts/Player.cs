@@ -24,6 +24,12 @@ public class Player : MonoBehaviour
         inputKeyValue = value;
     }
 
+    public void StopMove()
+    {
+        rb.velocity = Vector3.zero;
+        inputKeyValue = 0.0f;
+    }
+
     private void FixedUpdate()
     {
         if (moveFlag)
