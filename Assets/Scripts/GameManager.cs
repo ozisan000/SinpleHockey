@@ -3,90 +3,64 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public enum JOIN_PLAYER
-{
-    Player1,
-    Player2
-}
-
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    Sound soundManager;
-    [SerializeField]
-    UIManager uiManager;
+    Sound sound;
     [SerializeField]
     CameraManager cameraManager;
     [SerializeField]
-    Input inputManager;
+    Input input;
 
     [SerializeField]
-    GameObject ball;
+    Ball ball;
     [SerializeField]
-    Transform startBallPos;
+    Vector3 startBallPos;
+
+    const string goal1Name = "Goal1";
+    const string goal2Name = "Goal2";
 
     [SerializeField]
     Player player1;
     [SerializeField]
-    Transform startPlayer1Pos;
-    [SerializeField]
-    CollisionHandler goal1;
+    Vector3 startPlayer1Pos;
     int player1Point = 0;
 
     [SerializeField]
     Player player2;
     [SerializeField]
-    Transform startPlayer2Pos;
-    [SerializeField]
-    CollisionHandler goal2;
+    Vector3 startPlayer2Pos;
     int player2Point = 0;
 
     [SerializeField, Range(1, 100)]
     int pointMax = 1;
-    [SerializeField,Range(5.0f,999.0f)]
-    float timeLimit = 30.0f;
     [SerializeField]
     int eventID = 0;
 
-    float time = 0.0f;
-    float timeBuffer = 0.0f;
-
-    float startUITime = 0.0f;
-
-    private bool onTimeSEFlag = true;
-
-    private bool resultFlag = false;
-
     void Init()
     {
-        time = timeLimit;
-        player1.Init(inputManager, soundManager, JOIN_PLAYER.Player1);
-        player2.Init(inputManager, soundManager, JOIN_PLAYER.Player2);
+        player1.Init(sound);
+        player2.Init(sound);
+        ball.Init(PutItInTheGoal);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        inputManager.Init();
+        input.Init();
         Init();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (0 <= eventID)
-            TimerUpdate();
-        uiManager.UIUpdate(eventID);
         switch (eventID)
         {
-            case -1:
-
-                break;
             case 0:
                 GameStart();
                 break;
             case 1:
-                CheckGoToResult();
+                PlayerInputUpdate();
                 break;
             case 2:
                 Result();
@@ -94,87 +68,65 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void TimerUpdate()
-    {
-        if (!resultFlag)
-        {
-            time -= Time.deltaTime;
-        }
-
-        if (timeBuffer != time)
-        {
-            timeBuffer = time;
-        }
-    }
-
     void GameStart()
     {
-        if (time > timeLimit - startUITime)
+        if (input.StartGameInput)
         {
-            //eventTextData.text = startText;
+            //サウンド再生
+            eventID++;
+            ball.Move();
+        }
+        Debug.Log("GameStart");
+    }
 
-            if (onTimeSEFlag)
-            {
-                onTimeSEFlag = false;
-                //サウンド再生
-            }
+    void CheckPoint()
+    {
+        if( pointMax <= player2Point || pointMax <= player1Point)
+        {
+            eventID++;
         }
         else
         {
-            eventID++;
-            onTimeSEFlag = true;
+            eventID--;
         }
     }
 
-    void CheckGoToResult()
+    void PlayerInputUpdate()
     {
-        if (CheckTimerOver()|| CheckPoint())
-            eventID++;
-    }
-
-    bool CheckTimerOver()
-    {
-        if (time <= 0)
-        {
-            time = 0;
-            return true;
-        }
-        return false;
-    }
-
-    bool CheckPoint(JOIN_PLAYER player)
-    {
-        if (player == JOIN_PLAYER.Player1)
-        {
-            return pointMax <= player1Point;
-        }
-        else
-        {
-            return pointMax <= player2Point;
-        }
-    }
-
-    bool CheckPoint()
-    {
-        return pointMax <= player2Point || pointMax <= player1Point;
+        player1.InputKey(input.Player1Input);
+        player2.InputKey(input.Player2Input);
     }
 
     void Result()
     {
         //UI表示
+        Debug.Log("Result");
     }
 
-    void GameClear()
+    void PutItInTheGoal(Collider collider)
     {
-        //eventTextData.text = goalText;
-        resultFlag = true;
-        //EndGameSE(goalSE);
+        if (collider.tag == goal1Name)
+        {
+            player2Point++;
+            ResetSetGame();
+        }
+        else if (collider.tag == goal2Name)
+        {
+            player1Point++;
+            ResetSetGame();
+        }
     }
 
-    void GameOver()
+    void ResetSetGame()
     {
-        //eventTextData.text = gameOverText;
-        resultFlag = true;
-        //EndGameSE(gameOverSE);
+        ball.StopMove();
+        //ボールの座標を変更
+        ball.gameObject.transform.position = startBallPos;
+
+        //プレイヤーの座標を変更
+        player1.transform.position = startPlayer1Pos;
+        player2.transform.position = startPlayer2Pos;
+        CheckPoint();
+        Debug.Log("1:" + player1Point + " " + "2:" + player2Point);
     }
 }
