@@ -12,7 +12,7 @@ public class Input : MonoBehaviour
 
     InputAction player1Act;            //ジャンプの入力
     InputAction player2Act;            //スライディングの入力
-    InputAction startGameAct;           //
+    InputAction startGameAct;          //
     InputAction resetGameAct;
 
     public float Player1Input { get => player1Act.ReadValue<Vector2>().y; }       //ボタンを押したとき
@@ -34,8 +34,4 @@ public class Input : MonoBehaviour
         resetGameAct = playerInput.currentActionMap[resetGameName];
     }
 
-    public void Awake()
-    {
-        Init();
-    }
 }

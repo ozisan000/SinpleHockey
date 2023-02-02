@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -31,7 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     string winText = " Win!";
 
-    bool inputFlag = false;
+    bool allowInputFlag = false;
 
     const string goal1Name = "Goal1";
     const string goal2Name = "Goal2";
@@ -69,25 +67,20 @@ public class GameManager : MonoBehaviour
     int player2Point = 0;
     const string player2Name = "Blue";
 
-    void Init()
-    {
-        player1.Init(sound);
-        player2.Init(sound);
-        ball.Init(PutItInTheGoal, sound);
-    }
-
     // Start is called before the first frame update
     void Start()
     {
         input.Init();
         sound.Init();
-        Init();
+        player1.Init();
+        player2.Init();
+        ball.Init(sound);
+        ball.CollisionHandler.triggerEnterEvent += PutItInTheGoal;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
         PlayerInputUpdate();
         UpdateUI();
         switch (eventID)
@@ -95,13 +88,15 @@ public class GameManager : MonoBehaviour
             case GameEvent.Start:
                 GameStart();
                 break;
+
             case GameEvent.Main:
-                inputFlag = true;
+                allowInputFlag = true;
                 if (input.ResetGameTrigger)
                 {
                     ResetSetGame();
                 }
                 break;
+
             case GameEvent.Result:
                 Result();
                 break;
@@ -118,7 +113,6 @@ public class GameManager : MonoBehaviour
     {
         if (input.StartGameTrigger)
         {
-            //サウンド再生
             eventID++;
             ball.Move();
             startText.alpha = 0.0f;
@@ -146,7 +140,7 @@ public class GameManager : MonoBehaviour
 
     void PlayerInputUpdate()
     {
-        if (inputFlag)
+        if (allowInputFlag)
         {
             player1.InputKey(input.Player1Input);
             player2.InputKey(input.Player2Input);
@@ -209,7 +203,7 @@ public class GameManager : MonoBehaviour
         //ボールの座標を変更
         ball.gameObject.transform.position = startBallPos;
 
-        inputFlag = false;
+        allowInputFlag = false;
 
         //プレイヤーの座標を変更
         player1.StopMove();

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,16 +5,11 @@ public class Player : MonoBehaviour
     [SerializeField]
     float speed;                //プレイヤーのスピード
     float inputKeyValue = 0.0f;
-    Sound sound;
     Rigidbody rb;
 
-    bool moveFlag = true;
-    public bool MoveFlag { get { return moveFlag; } set { moveFlag = value; } }
-
-    public void Init(Sound sound)
+    public void Init()
     {
         rb = GetComponent<Rigidbody>();
-        this.sound = sound;
     }
 
     public void InputKey(float value)
@@ -30,15 +23,8 @@ public class Player : MonoBehaviour
         inputKeyValue = 0.0f;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (moveFlag)
-        {
-            rb.velocity = Vector3.forward * inputKeyValue * speed;
-        }
-        else
-        {
-            rb.velocity = Vector2.zero;
-        }
+        rb.velocity = Vector3.forward * inputKeyValue * speed;
     }
 }
