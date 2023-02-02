@@ -16,8 +16,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Sound sound;
     [SerializeField]
-    CameraManager cameraManager;
-    [SerializeField]
     Input input;
 
     [SerializeField]
