@@ -13,6 +13,11 @@ enum GameEvent
 public class GameManager : MonoBehaviour
 {
 
+    [SerializeField, Range(1, 100),Header("GameSetting")]
+    int pointMax = 1;
+    [SerializeField]
+    GameEvent eventID = GameEvent.Start;
+
     [SerializeField]
     Sound sound;
     [SerializeField]
@@ -23,6 +28,11 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Vector3 startBallPos;
 
+    [SerializeField]
+    string winText = " Win!";
+
+    bool inputFlag = false;
+
     const string goal1Name = "Goal1";
     const string goal2Name = "Goal2";
 
@@ -32,50 +42,45 @@ public class GameManager : MonoBehaviour
     TextMeshPro resultText;
     [SerializeField]
     TextMeshPro resultText2;
-    [SerializeField]
-    Color player1Color;
-    [SerializeField]
-    Color player2Color;
 
-    [SerializeField]
+    [SerializeField, Header("Player1Setting")]
     Player player1;
     [SerializeField]
     Vector3 startPlayer1Pos;
     [SerializeField]
     TextMeshPro player1Text;
+    [SerializeField]
+    ParticleSystem goal1Effect;
+    [SerializeField]
+    Color player1Color;
     int player1Point = 0;
     const string player1Name = "Red";
 
-    [SerializeField]
+    [SerializeField, Header("Player2Setting")]
     Player player2;
     [SerializeField]
     Vector3 startPlayer2Pos;
     [SerializeField]
     TextMeshPro player2Text;
+    [SerializeField]
+    ParticleSystem goal2Effect;
+    [SerializeField]
+    Color player2Color;
     int player2Point = 0;
     const string player2Name = "Blue";
-
-    [SerializeField]
-    string winText = " Win!";
-
-    [SerializeField, Range(1, 100)]
-    int pointMax = 1;
-    [SerializeField]
-    GameEvent eventID = GameEvent.Start;
-
-    bool inputFlag = false;
 
     void Init()
     {
         player1.Init(sound);
         player2.Init(sound);
-        ball.Init(PutItInTheGoal);
+        ball.Init(PutItInTheGoal, sound);
     }
 
     // Start is called before the first frame update
     void Start()
     {
         input.Init();
+        sound.Init();
         Init();
     }
 
@@ -130,6 +135,8 @@ public class GameManager : MonoBehaviour
         if( pointMax <= player2Point || pointMax <= player1Point)
         {
             eventID++;
+            goal1Effect.Play();
+            goal2Effect.Play();
         }
         else
         {
@@ -183,11 +190,15 @@ public class GameManager : MonoBehaviour
         if (collider.tag == goal1Name)
         {
             player2Point++;
+            goal1Effect.Play();
+            sound.PlaySE(SEType.Goal);
             ResetSetGame();
         }
         else if (collider.tag == goal2Name)
         {
             player1Point++;
+            goal2Effect.Play();
+            sound.PlaySE(SEType.Goal);
             ResetSetGame();
         }
     }

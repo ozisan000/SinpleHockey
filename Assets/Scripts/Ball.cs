@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -9,18 +11,20 @@ public class Ball : MonoBehaviour
     [SerializeField]
     float startSpeed;
     [SerializeField]
-    float reflectRatio = 10.0f;
+    TextMeshPro debugText;
     Rigidbody rb;
     CollisionHandler collisionHandler;
+    Sound sound;
 
     const string playerTag = "Player";
 
     Vector3 direction;
     Vector3 normal;
 
-    public void Init(Action<Collider> trigger_enter_act)
+    public void Init(Action<Collider> trigger_enter_act,Sound sound)
     {
         rb = GetComponent<Rigidbody>();
+        this.sound = sound;
         collisionHandler = GetComponent<CollisionHandler>();
         collisionHandler.collisionEnterEvent += ReflectBall;
         collisionHandler.triggerEnterEvent += trigger_enter_act;
@@ -47,6 +51,17 @@ public class Ball : MonoBehaviour
     private void Update()
     {
         direction = rb.velocity;
+        debugText.text = "Velocity:"+rb.velocity;
+    }
+
+    bool PlayerUpMoveCheck(float player_speed,float ball_dir)
+    {
+        return player_speed > 0 && ball_dir < 0;
+    }
+
+    bool PlayerDownMoveCheck(float player_speed, float ball_dir)
+    {
+        return player_speed < 0 && 0 < ball_dir;
     }
 
     void ReflectBall(Collision collision)
@@ -57,13 +72,17 @@ public class Ball : MonoBehaviour
 
         if (collision.transform.tag == playerTag)
         {
-            Debug.Log("Before result:" + result);
             var playerRigidBody = collision.gameObject.GetComponent<Rigidbody>();
-            if (playerRigidBody.velocity.normalized.z != 0)
-                //result += playerRigidBody.velocity.normalized * reflectRatio;
-                result += playerRigidBody.velocity;
-            Debug.Log("Affter result:" + result);
+            var playerMoveSpeed = playerRigidBody.velocity.normalized.z;
+
+            if (PlayerUpMoveCheck(playerMoveSpeed, result.z) || 
+                PlayerDownMoveCheck(playerMoveSpeed, result.z))
+            {
+                result.z = -result.z;
+            }
         }
+
+        sound.PlaySE(SEType.Reflect);
 
         rb.velocity = result;
 

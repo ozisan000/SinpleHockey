@@ -5,22 +5,23 @@ using System;
 
 public enum SEType
 {
-    Sliding,
-    Jump,
-    Break,
-    Title,
-    Death,
-    Descent ,
-    Landing
+    Reflect,
+    Goal
 }
+
+public enum BGMType
+{
+    None,
+}
+
 public class Sound : MonoBehaviour
 {
     [System.Serializable]
     public struct BGMData
     {
         [SerializeField]
-        EventType eventType;
-        public EventType EventType { get => eventType; }
+        BGMType eventType;
+        public BGMType EventType { get => eventType; }
 
         [SerializeField]
         AudioClip bgmClip;
@@ -53,7 +54,7 @@ public class Sound : MonoBehaviour
     [SerializeField]
     List<SEData> seList;
 
-    Dictionary<EventType, AudioClip> bgmDic = new Dictionary<EventType, AudioClip>();
+    Dictionary<BGMType, AudioClip> bgmDic = new Dictionary<BGMType, AudioClip>();
     Dictionary<SEType, AudioClip> seDic = new Dictionary<SEType, AudioClip>();
 
     bool isStopFadeOutBGM = false;
@@ -100,14 +101,14 @@ public class Sound : MonoBehaviour
         }
     }
 
-    public void PlayBGM(EventType type)
+    public void PlayBGM(BGMType type)
     {
         bgmSource.clip = bgmDic[type];
         bgmSource.Play();
     }
 
-    public void ChangeEventBGM(
-        EventType type, 
+    public void ChangeBGM(
+        BGMType type,
         EasingType easing_type,
         float speed = 0.0f)
     {
@@ -126,9 +127,9 @@ public class Sound : MonoBehaviour
     }
 
     public void PlayFadeInBGM(
-            EventType type,
+            BGMType type,
             EasingType easing_type,
-        float speed=0.0f)
+        float speed = 0.0f)
     {
         if (isStopFadeOutBGM) return;
         if (speed <= 0.0f)
@@ -229,7 +230,7 @@ public class Sound : MonoBehaviour
         }
     }
 
-    public void MyAwake()
+    public void Init()
     {
         //ƒŠƒXƒg‚©‚çŽ«‘‚ðì¬
         foreach(var data in bgmList)
