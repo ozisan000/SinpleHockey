@@ -3,11 +3,11 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     [SerializeField]
-    float startSpeed;     //ゲーム開始時のボールの速度
+    float startSpeed;             //ゲーム開始時のボールの速度
 
-    Rigidbody rb;
-    Sound sound;
-    Vector3 ballDir;      //ボールの向き
+    Rigidbody rb;                 //物理演算のプログラム
+    Sound sound;                  //サウンドのプログラム
+    Vector3 ballDir;              //ボールの向き
 
     CollisionHandler collisionHandler;
     public CollisionHandler CollisionHandler

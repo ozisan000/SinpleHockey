@@ -3,9 +3,9 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    float speed;                //プレイヤーのスピード
-    float inputKeyValue = 0.0f;
-    Rigidbody rb;
+    float speed;                    //プレイヤーのスピード
+    float inputKeyValue = 0.0f;     //入力された値
+    Rigidbody rb;                   //物理演算のプログラム
 
 
     /// <summary>
