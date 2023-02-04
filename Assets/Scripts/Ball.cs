@@ -26,11 +26,11 @@ public class Ball : MonoBehaviour
     /// <param name="sound"></param>
     public void Init(Sound sound)
     {
-        rb = GetComponent<Rigidbody>();
-
         collisionHandler = GetComponent<CollisionHandler>();
-        this.sound = sound;
+
         collisionHandler.collisionEnterEvent += ReflectBall;
+        rb = GetComponent<Rigidbody>();
+        this.sound = sound;
     }
 
     /// <summary>
@@ -81,6 +81,9 @@ public class Ball : MonoBehaviour
     {
         Vector3 result = Vector3.Reflect(ballDir, collision.contacts[0].normal);
 
+        //==========================
+        //è„ãâé“å¸ÇØ
+        //==========================
         if (collision.transform.tag == playerTag)
         {
             var playerRigidBody = collision.gameObject.GetComponent<Rigidbody>();
@@ -92,6 +95,7 @@ public class Ball : MonoBehaviour
                 result.z = -result.z;
             }
         }
+        //==========================
 
         rb.velocity = result;
         sound.PlaySE(SEType.Reflect);
