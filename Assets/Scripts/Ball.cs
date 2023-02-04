@@ -3,11 +3,11 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     [SerializeField]
-    float startSpeed;
+    float startSpeed;     //ゲーム開始時のボールの速度
 
     Rigidbody rb;
     Sound sound;
-    Vector3 ballDir;
+    Vector3 ballDir;      //ボールの向き
 
     const int minDir = -1;
     const int maxDir = 2;
@@ -22,15 +22,23 @@ public class Ball : MonoBehaviour
     }
     const string playerTag = "Player";
 
+
+    /// <summary>
+    /// ボールを初期化するプログラム（動かす準備を行う）
+    /// </summary>
+    /// <param name="sound"></param>
     public void Init(Sound sound)
     {
         rb = GetComponent<Rigidbody>();
-        
+
         collisionHandler = GetComponent<CollisionHandler>();
         this.sound = sound;
         collisionHandler.collisionEnterEvent += ReflectBall;
     }
 
+    /// <summary>
+    /// ボールの動きのプログラム
+    /// </summary>
     public void Move()
     {
         const int notDir = 0;
@@ -45,17 +53,31 @@ public class Ball : MonoBehaviour
         rb.AddForce(startDir * startSpeed, ForceMode.Impulse);
     }
 
+
+    /// <summary>
+    /// ボールを止めるプログラム
+    /// </summary>
     public void StopMove()
     {
         rb.velocity = Vector3.zero;
         ballDir = Vector3.zero;
     }
 
+
+    /// <summary>
+    /// ボールの中身の情報を更新するプログラム
+    /// </summary>
     private void Update()
     {
         ballDir = rb.velocity;
     }
 
+
+
+    /// <summary>
+    /// ボールが反射したときの計算のプログラム
+    /// </summary>
+    /// <param name="collision"></param>
     void ReflectBall(Collision collision)
     {
         Vector3 result = Vector3.Reflect(ballDir, collision.contacts[0].normal);
