@@ -9,9 +9,6 @@ public class Ball : MonoBehaviour
     Sound sound;
     Vector3 ballDir;      //ƒ{[ƒ‹‚ÌŒü‚«
 
-    const int minDir = -1;
-    const int maxDir = 2;
-
     CollisionHandler collisionHandler;
     public CollisionHandler CollisionHandler
     {
@@ -42,6 +39,8 @@ public class Ball : MonoBehaviour
     public void Move()
     {
         const int notDir = 0;
+        const int minDir = -1;
+        const int maxDir = 2;
 
         Vector3 startDir = Vector3.zero;
         while (startDir.x == notDir || startDir.z == notDir)
